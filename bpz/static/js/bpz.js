@@ -50,9 +50,8 @@ bpz = {
   'location': new Location(),
   get map() {
     if (!bpz._map){
-      //TODO: Move access token into environment variable 
-      L.mapbox.accessToken ='pk.eyJ1IjoiamR1bmdhbiIsImEiOiJlOTl6MFpNIn0.-3o5vIOCjkfXd-7ibZrb8A'
-      bpz._map=L.mapbox.map('map-canvas', 'jdungan.jbbebonl').setView([36.1587336,-95.9940543],12); 
+      L.mapbox.accessToken = MAPBOX_TOKEN;
+      bpz._map=L.mapbox.map('map-canvas', MAPBOX_ID).setView([36.1587336,-95.9940543],12); 
     }
     return bpz._map
   },

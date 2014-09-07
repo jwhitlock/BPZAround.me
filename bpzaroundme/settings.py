@@ -127,7 +127,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.request",
     "django.core.context_processors.static",
     "django.core.context_processors.tz",
-    "django.contrib.messages.context_processors.messages"
+    "django.contrib.messages.context_processors.messages",
+    "bpz.context_processors.mapbox",
 )
 
 MIDDLEWARE_CLASSES = (
@@ -216,6 +217,14 @@ TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 # jingo
 JINGO_INCLUDE_PATTERN = r'\.jinja2'
+
+# mapbox
+# You will need to signup for a free account at https://www.mapbox.com/
+
+# mapbox public API token.  See https://www.mapbox.com/account/apps/
+MAPBOX_TOKEN = environ.get('MAPBOX_TOKEN')
+# mapbox map ID.  See https://www.mapbox.com/projects/
+MAPBOX_ID = environ.get('MAPBOX_ID', 'jdungan.jbbebonl')
 
 # More overrides from environment
 
