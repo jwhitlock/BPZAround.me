@@ -4,8 +4,39 @@
     "repository": "https://github.com/codefortulsa/BPZAround.me",
     "keywords": ["python", "django", "geodjango", "postgres", "postgis", "twilio"],
     "env": {
+        "ALLOWED_HOSTS": {
+            "description": "Comma-separaed list of hostnames to allow",
+            "value": "*",
+        },
+        "DJANGO_DEBUG": {
+            "description": "Setting to 1 enables debug features, such as tracebacks",
+            "value": "0",
+        },
+        "EXTRA_INSTALLED_APPS": {
+            "description": "Comma-separated list of apps to add to INSTALLED_APPS",
+            "value": "gunicorn",
+        },
         "SECRET_KEY": {
-            "generator": "secret"
-        }
+            "description": "Used for cyptographic signing, and should be set to a unique, unpredictable value.",
+            "generator": "secret",
+        },
+        "SECURE_PROXY_SSL_HEADER": {
+            "description": "HTTP header/value combo that signifies a request is secure",
+            "value": "HTTP_X_FORWARDED_PROTO,https",
+        },
+        "STATIC_ROOT": {
+            "description": "Base path for collected static files",
+            "value": "staticfiles",
+        },
+        "MAPBOX_TOKEN": {
+            "description": "Mapbox API public token",
+        },
+        "MAPBOX_ID": {
+            "description": "Mapbox map ID".
+            "value": "jdungan.jbbebonl",
+        },
+        "POSTGIS_VERSION": {
+            "description": "PostGIS version, to avoid runtime detection",
+        },
     }
 }
