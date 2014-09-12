@@ -43,7 +43,8 @@ output/*/index.html
 docs/_build
 
 # Collected staticfiles
-staticfiles
+/staticfiles/*
+!/staticfiles/.keep
 
 # OSX
 .DS_Store

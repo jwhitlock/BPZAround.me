@@ -100,13 +100,111 @@ Ready to contribute? Here's how to set up `BPZAround.me` for local development.
 
 Run on Heroku
 -------------
+Heroku will allow you to run BPZAround.me for free or cheaply.  However, the
+free database plans currently do not support PostGIS, so there's more work to
+do (and possible an expense) to get a working database.  Two options are given:
+running a production Heroku database, or running an AWS RDS instance.
 
-#. `Register for Heroku`_
+It assumes you've forked the repo and have cloned the fork locally.  See
+`Getting Started with Python on Heroku`_ for friendly instructions.  It also
+assumes you have the PostgreSQL command line tool `psql` installed.
 
-#. .. image:: https://www.herokucdn.com/deploy/button.png
-        :target: https://heroku.com/deploy?template=https://github.com/codefortulsa/BPZAround.me
+#. `Install Heroku Toolbelt`_.
 
-.. _`Register for Heroku`: https://id.heroku.com/signup
+#. In the project directory, create the heroku app::
+
+   $ heroku create
+
+#. (Database option #1) Upgrade to `production PostgreSQL`_ for PostGIS::
+
+   $ heroku addons:add pgbackups
+   $ heroku addons:add heroku-postgresql:standard-0
+   $ heroku pg:wait
+   $ heroku maintenance:on
+   $ heroku pg:info  # Get color name of old Hobby-dev and new Standard 0 databases
+   $ heroku pg:promote HEROKU_POSTGRESQL_[NEW_COLOR]
+   $ heroku maintenance:off
+   $ heroku pg:psql -c "CREATE EXTENSION IF NOT EXISTS postgis"
+
+#. (Database option #2) Add a AWS RDS database:
+
+   You can sign up for AWS, give them your credit card, and then spin up a
+   PostgreSQL database for free (in the first year) or cheap.  Create a public
+   RDS server, and then update your security group to allow any IP to reach
+   port 5432.
+
+   If you have these RDS parameters:
+
+   * DB Name: bpzaroundme
+   * Username: bpzuser
+   * Password: password
+   * Endpoint: endpoint.rand0string.us-west-2.rds.amazonaws.com:5432
+
+   Then use this to setup the database::
+
+       $ POSTGRES_PLZ=1 DATABASE_URL="postgres://bpzuser@endpoint.rand0string.us-west-2.rds.amazonaws.com:5432/bpzaroundme" ./manage.py dbshell
+       Password for user bpzuser:
+       psql (9.3.5, server 9.3.3)
+       SSL connection (cipher: DHE-RSA-AES256-SHA, bits: 256)
+       Type "help" for help.
+
+       bpzaroundme=> CREATE EXTENSION postgis;
+       CREATE EXTENSION
+       bpzaroundme=> CREATE EXTENSION postgis_topology;
+       CREATE EXTENSION
+       bpzaroundme=> \q
+
+   Drop the `POSTGRES_PLZ=1` to verify that the PostGIS extension was installed::
+
+       $ DATABASE_URL="postgis://bpzuser@endpoint.rand0string.us-west-2.rds.amazonaws.com:5432/bpzaroundme" ./manage.py dbshell
+       Password for user bpzuser:
+       psql (9.3.5, server 9.3.3)
+       SSL connection (cipher: DHE-RSA-AES256-SHA, bits: 256)
+       Type "help" for help.
+
+       bpzaroundme=> SELECT PostGIS_Version();
+                   postgis_version
+       ---------------------------------------
+       2.1 USE_GEOS=1 USE_PROJ=1 USE_STATS=1
+       (1 row)
+
+       bpzaroundme=> \q
+
+   Set the connection in heroku (be sure to add the password)::
+
+       $ heroku config:set DATABASE_URL="postgis://bpzuser:password@endpoint.rand0string.us-west-2.rds.amazonaws.com:5432/bpzaroundme"
+
+#. Configure the environment::
+
+   $ heroku config:set BUILDPACK_URL=https://github.com/ddollar/heroku-buildpack-multi.git
+   $ heroku config:set DJANGO_DEBUG=1   # Alternatively, set ALLOWED_HOSTS
+
+#. Deploy the code::
+
+   $ git push heroku master  # Deploy current master, or
+   $ git push heroku my_aweseome_branch:master  # Deploy a difference branch
+
+#. Open app in browser::
+
+   $ heroku open
+
+#. Setup the database::
+
+   $ heroku run ./manage.py syncdb  # Also setup your superuser account
+   $ heroku run ./manage.py migrate
+
+#. Load Tulsa data::
+
+   $ heroku run ./manage.py load_cases data/boa-cases.json
+   $ heroku run ./manage.py load_cases data/tmapc-cases.json
+   $ heroku run ./manage.py load_home_owners_associations data/home-owners-associations.json
+
+If you want to use your own domain, then see the Heroku article on `Custom Domains`_.
+
+.. _`Install Heroku Toolbelt`: https://toolbelt.heroku.com
+.. _`Getting Started with Python on Heroku`: https://devcenter.heroku.com/articles/getting-started-with-python#introduction
+.. _`production PostgreSQL`: https://devcenter.heroku.com/articles/heroku-postgres-plans
+.. _`Custom Domains`: https://devcenter.heroku.com/articles/custom-domains
 
 Make Changes
 ------------

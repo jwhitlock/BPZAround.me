@@ -4,8 +4,22 @@
     "repository": "https://github.com/codefortulsa/BPZAround.me",
     "keywords": ["python", "django", "geodjango", "postgres", "postgis", "twilio"],
     "env": {
+        "BUILDPACK_URL": "https://github.com/ddollar/heroku-buildpack-multi.git",
         "SECRET_KEY": {
+            "description":  "A secret key for verifying the integrity of signed cookies.",
             "generator": "secret"
+        },
+        "DJANGO_DEBUG": {
+            "description": "Set to 1 to enable Django debug functionality",
+            "value": "0"
+        },
+        "ALLOWED_HOSTS": {
+            "description": "Comma-separated list of allowed hosts"
+            "value": "*"
         }
-    }
+    },
+    "addons": [
+        "pgbackups",
+        "heroku-postgresql:standard-0",
+    ]
 }

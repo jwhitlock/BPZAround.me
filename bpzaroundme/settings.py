@@ -21,6 +21,7 @@ DATABASE_URL - See https://github.com/kennethreitz/dj-database-url
 DJANGO_DEBUG - 1 to enable, 0 to disable, default disabled
 EXTRA_INSTALLED_APPS - comma-separated list of apps to add to INSTALLED_APPS
 POSTGIS_VERSION - "2.1.3" to set to version (2, 1, 3)
+POSTGRES_PLZ - Set to 1 to keep Postgres in Heroku
 SECRET_KEY - Overrides SECRET_KEY
 SECURE_PROXY_SSL_HEADER - "HTTP_X_FORWARDED_PROTOCOL,https" to enable
 STATIC_ROOT - Overrides STATIC_ROOT
@@ -54,6 +55,15 @@ DATABASES = {
     #     'USER': 'bpzaroundme',
     # }
 }
+
+# Heroku: force engine to postgis
+db_engine = DATABASES['default'].get('ENGINE')
+db_host = DATABASES['default'].get('HOST')
+heroku_db = 'postgresql' in db_engine and 'amazonaws.com' in db_host
+POSTGRES_PLZ = environ.get("POSTGRES_PLZ", "Nope") in ('1', 1)
+if heroku_db and not POSTGRES_PLZ:
+    DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
+
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts

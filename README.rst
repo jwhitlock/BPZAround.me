@@ -14,7 +14,7 @@ BPZAround.me
 .. image:: https://coveralls.io/repos/codefortulsa/BPZAround.me/badge.png
         :target: https://coveralls.io/r/codefortulsa/BPZAround.me
 
-.. image:: https://www.herokucdn.com/deploy/button.png
+.. no_image https://www.herokucdn.com/deploy/button.png
         :target: https://heroku.com/deploy
 
 
